@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Income Tax Estimator (India)</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a192f, #112240);
+      color: #e0f7fa;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      margin-top: 60px;
+      padding: 30px 25px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 255, 128, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #00ffc3;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #b2ebf2;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: none;
+      background: #e0f2f1;
+      color: #000;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 14px;
+      background: #00ffc3;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #002b36;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 255, 195, 0.3);
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #00d2a8;
+    }
+
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: rgba(0, 255, 195, 0.05);
+      border: 1px solid #00ffc3;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 195, 0.1);
+      font-size: 1rem;
+      color: #a0fdf4;
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 15px 0;
+      background: #081c24;
+      color: #80cbc4;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 30px 15px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Income Tax Estimator 🇮🇳</h1>
+
+    <label for="income">Enter your annual income (₹):</label>
+    <input type="number" id="income" placeholder="e.g. 850000" />
+
+    <label for="type">Select type of income:</label>
+    <select id="type">
+      <option value="">-- Select Income Type --</option>
+      <option value="salary">Salary</option>
+      <option value="business">Business</option>
+      <option value="capitalGains">Capital Gains</option>
+    </select>
+
+    <button onclick="calculateTax()">Calculate Tax</button>
+
+    <div id="result"></div>
+  </div>
+
+  <footer>
+    Made with ❤️ in India | Tax Info FY 2024-25 | Just for Awareness
+  </footer>
+
+  <script>
+    function calculateTax() {
+      const income = parseFloat(document.getElementById("income").value);
+      const type = document.getElementById("type").value;
+      const resultDiv = document.getElementById("result");
+
+      if (!income || !type) {
+        resultDiv.innerHTML = "<span style='color: #ff8a80;'>⚠️ Please enter income and select income type.</span>";
+        return;
+      }
+
+      let tax = 0;
+
+      // New Regime Slabs FY 2024-25
+      if (income <= 300000) tax = 0;
+      else if (income <= 600000) tax = (income - 300000) * 0.05;
+      else if (income <= 900000) tax = (income - 600000) * 0.10 + 15000;
+      else if (income <= 1200000) tax = (income - 900000) * 0.15 + 45000;
+      else if (income <= 1500000) tax = (income - 1200000) * 0.20 + 90000;
+      else tax = (income - 1500000) * 0.30 + 150000;
+
+      const taxPercent = (tax / income) * 100;
+
+      let message = `
+        <strong>🧾 Tax Summary:</strong><br><br>
+        💰 <strong>Income:</strong> ₹${income.toLocaleString()}<br>
+        📤 <strong>Tax Payable:</strong> ₹${Math.round(tax).toLocaleString()}<br>
+        📊 <strong>Tax Rate:</strong> ${taxPercent.toFixed(2)}%<br><br>
+        ⚠️ <strong>Penalty if tax not paid:</strong><br>
+        • Section 234F – ₹5,000 fine for late ITR<br>
+        • Section 234A/B/C – Interest on delay<br>
+        • Section 270A – 50% penalty on under-reporting
+      `;
+
+      if (tax === 0) {
+        message = `
+          ✅ Your income ₹${income.toLocaleString()} has no tax under the New Regime.<br><br>
+          📌 Still, file ITR to avoid ₹5,000 penalty under Section 234F and claim refunds if applicable.
+        `;
+      }
+
+      resultDiv.innerHTML = message;
+    }
+  </script>
+
+</body>
+</html>
